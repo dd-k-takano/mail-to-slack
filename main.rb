@@ -21,8 +21,8 @@ def lambda_handler(event:, context:)
 
   boundary = raw.match(/(?<=boundary=")(.*)(?=")/)[0]
   logger.debug "boundary : #{boundary}"
-  header = /\r\nMIME-Version: 1.0\r\nContent-Type: text\/plain\; charset=\"(.*)?\"\r\nContent-Transfer-Encoding: (.*)?\r\n\r\n/
-  body = raw.split(boundary)[2].gsub(header, '')
+  header = /(\r\nMIME-Version: 1.0)?\r\nContent-Type: text\/plain\; charset=\"(.*)?\"\r\nContent-Transfer-Encoding: (.*)?\r\n\r\n/
+  body = raw.split(boundary)[2].gsub(header, '').gsub(/\r\n--/, '')
 
   if encoding.start_with?('base64') then
     body = Base64.decode64(body).force_encoding(Encoding::UTF_8)
